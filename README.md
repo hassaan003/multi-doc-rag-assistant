@@ -1,4 +1,4 @@
-# Multi-Doc RAG Assistant
+ÿþ# Multi-Doc RAG Assistant
 
 A production-grade, multi-format Retrieval-Augmented Generation (RAG) web application built with **FastAPI**, **LangChain**, **ChromaDB**, and **Google Gemini**. 
 
@@ -11,7 +11,7 @@ Designed for strict data isolation and multi-turn conversational accuracy, this 
 * **Multi-Format Document Ingestion:** Dynamically routes and parses `.pdf`, `.docx`, `.pptx`, `.txt`, `.csv`, `.md`, `.html`, and `.epub` files using modular LangChain document loaders.
 * **Session-Isolated Vector Storage:** Each user session writes to an isolated ChromaDB collection (`session_<id>`), preventing cross-session data bleeding.
 * **Cascading Session Teardown:** Deleting a session executes a full cleanup lifecycleâ€”wiping ephemeral chat history, dropping the session's ChromaDB collection, and unlinking uploaded source files from disk.
-* **Conversational Memory & Query Rewriting:** Maintains per-session chat history and uses an LLM pre-processing pass to rewrite context-dependent follow-up questions (e.g., *"explain that more simply"*) into standalone search queries before retrieval.
+* **Conversational Memory & Query Rewriting:** Maintains per-session chat history and uses an LLM pre-processing pass to rewrite context-dependent follow-up questions (e.g., *"explain that more simply"*into standalone search queries before retrieval.
 * **Max Marginal Relevance (MMR) Retrieval:** Balances semantic similarity with result diversity (`fetch_k=20`, `k=6`) to avoid redundant chunks and maximize context coverage.
 * **Zero-Cost Local Embeddings:** Runs `all-MiniLM-L6-v2` via HuggingFace locally on CPU, eliminating embedding API rate limits and latency overhead.
 * **Source Grounding & Citations:** Strict prompt grounding ensures answers rely solely on uploaded context, returning expandable source snippets with filenames and page numbers.
@@ -56,4 +56,4 @@ pip install langchain langchain-community langchain-text-splitters langchain-hug
 pip install pypdf unstructured python-docx python-pptx markdown epub sentence-transformers
 4. Configure Environment VariablesCreate a .env file in the root directory and add your Google AI Studio API key:Code snippetGOOGLE_API_KEY=your_google_api_key_here
 5. Run the ApplicationBashuvicorn app.main:app --reload
-Chat Interface: Open http://127.0.0.1:8000/Interactive API Docs (Swagger UI): Open http://127.0.0.1:8000/docsArchitecture FlowIngestion (POST /upload): Validates file extension $\rightarrow$ saves file locally $\rightarrow$ extracts text via format-specific loader $\rightarrow$ splits text (chunk_size=1000, chunk_overlap=200) $\rightarrow$ embeds locally and stores in session_<id> Chroma collection.Retrieval & Generation (POST /ask): Rewrites follow-up query using recent session history $\rightarrow$ performs MMR vector search on session_<id> $\rightarrow$ injects retrieved chunks into grounded system prompt $\rightarrow$ generates response via Gemini and returns answer + source metadata.Cleanup (DELETE /sessions/{session_id}): Clears in-memory chat history $\rightarrow$ drops session_<id> collection from ChromaDB $\rightarrow$ deletes transient files from uploads/
+Chat Interface: Open http://127.0.0.1:8000/Interactive API Docs (Swagger UI): Open http://127.0.0.1:8000/docsArchitecture FlowIngestion (POST /upload): Validates file extension $\rightarrow$ saves file locally $\rightarrow$ extracts text via format-specific loader $\rightarrow$ splits text (chunk_size=1000, chunk_overlap=200$\rightarrow$ embeds locally and stores in session_<id> Chroma collection.Retrieval & Generation (POST /ask): Rewrites follow-up query using recent session history $\rightarrow$ performs MMR vector search on session_<id> $\rightarrow$ injects retrieved chunks into grounded system prompt $\rightarrow$ generates response via Gemini and returns answer + source metadata.Cleanup (DELETE /sessions/{session_id}): Clears in-memory chat history $\rightarrow$ drops session_<id> collection from ChromaDB $\rightarrow$ deletes transient files from uploads/
