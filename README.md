@@ -41,3 +41,19 @@ multi-doc-rag-assistant/
 ├── chroma_db/           # Local persistent ChromaDB storage (gitignored)
 ├── .env                 # Environment configuration for GOOGLE_API_KEY (gitignored)
 └── requirements.txt     # Python dependencies
+
+Getting Started1. Clone the RepositoryBashgit clone [https://github.com/hassaan003/multi-doc-rag-assistant.git](https://github.com/hassaan003/multi-doc-rag-assistant.git)
+cd multi-doc-rag-assistant
+2. Set Up a Virtual EnvironmentBashpython -m venv venv
+
+# On Windows:
+venv\Scripts\activate
+
+# On macOS/Linux:
+source venv/bin/activate
+3. Install DependenciesBashpip install fastapi uvicorn python-dotenv pydantic
+pip install langchain langchain-community langchain-text-splitters langchain-huggingface langchain-google-genai langchain-chroma
+pip install pypdf unstructured python-docx python-pptx markdown epub sentence-transformers
+4. Configure Environment VariablesCreate a .env file in the root directory and add your Google AI Studio API key:Code snippetGOOGLE_API_KEY=your_google_api_key_here
+5. Run the ApplicationBashuvicorn app.main:app --reload
+Chat Interface: Open http://127.0.0.1:8000/Interactive API Docs (Swagger UI): Open http://127.0.0.1:8000/docsArchitecture FlowIngestion (POST /upload): Validates file extension $\rightarrow$ saves file locally $\rightarrow$ extracts text via format-specific loader $\rightarrow$ splits text (chunk_size=1000, chunk_overlap=200) $\rightarrow$ embeds locally and stores in session_<id> Chroma collection.Retrieval & Generation (POST /ask): Rewrites follow-up query using recent session history $\rightarrow$ performs MMR vector search on session_<id> $\rightarrow$ injects retrieved chunks into grounded system prompt $\rightarrow$ generates response via Gemini and returns answer + source metadata.Cleanup (DELETE /sessions/{session_id}): Clears in-memory chat history $\rightarrow$ drops session_<id> collection from ChromaDB $\rightarrow$ deletes transient files from uploads/
